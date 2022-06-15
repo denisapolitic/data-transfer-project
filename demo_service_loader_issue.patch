@@ -1,0 +1,1336 @@
+Index: extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtension.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtension.java b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtension.java
+new file mode 100644
+--- /dev/null	(date 1653062325486)
++++ b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtension.java	(date 1653062325486)
+@@ -0,0 +1,33 @@
++/*
++ * Copyright 2021 The Data Transfer Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.datatransferproject.auth.generic;
++
++
++import org.datatransferproject.auth.OAuth2ServiceExtension;
++import org.datatransferproject.spi.api.auth.extension.AuthServiceExtension;
++
++import java.io.IOException;
++import java.net.URL;
++
++/**
++ * An {@link AuthServiceExtension} providing an authentication mechanism for Daybook services.
++ */
++public class GenericAuthServiceExtension extends OAuth2ServiceExtension {
++    public GenericAuthServiceExtension(GenericOAuthConfig genericOAuthConfig) {
++        super(genericOAuthConfig);
++    }
++}
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/resources/configs/Daybook.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/configs/Daybook.yaml b/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/configs/Daybook.yaml
+new file mode 100644
+--- /dev/null	(date 1652715054090)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/configs/Daybook.yaml	(date 1652715054090)
+@@ -0,0 +1,3 @@
++serviceID: "Daybook"
++baseURL: "https://us-central1-diary-a77f6.cloudfunctions.net/post-daybook-dtp"
++supportedDataTypes: ["PHOTOS", "SOCIAL-POSTS"]
+Index: extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericOAuthConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericOAuthConfig.java b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericOAuthConfig.java
+new file mode 100644
+--- /dev/null	(date 1653062308686)
++++ b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericOAuthConfig.java	(date 1653062308686)
+@@ -0,0 +1,45 @@
++package org.datatransferproject.auth.generic;
++
++import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.ImmutableSet;
++import java.util.Map;
++import java.util.Set;
++import org.datatransferproject.auth.OAuth2Config;
++import org.datatransferproject.auth.generic.GenericAuthSpecification;
++
++/**
++ * Class that provides Daybook-specific information for OAuth2
++ */
++public class GenericOAuthConfig implements OAuth2Config {
++
++  private GenericAuthSpecification authSpecification;
++
++  public GenericOAuthConfig(GenericAuthSpecification authSpecification) {
++    this.authSpecification = authSpecification;
++  }
++
++  @Override
++  public String getServiceName() {
++    return authSpecification.getServiceName();
++  }
++
++  @Override
++  public String getAuthUrl() {
++    return authSpecification.getAuthURL();
++  }
++
++  @Override
++  public String getTokenUrl() {
++    return authSpecification.getTokenURL();
++  }
++
++  @Override
++  public Map<String, Set<String>> getExportScopes() {
++    return authSpecification.getExportScopes();
++  }
++
++  @Override
++  public Map<String, Set<String>> getImportScopes() {
++    return authSpecification.getImportScopes();
++  }
++}
+Index: extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/package-info.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/package-info.java b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/package-info.java
+new file mode 100644
+--- /dev/null	(date 1653049533940)
++++ b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/package-info.java	(date 1653049533940)
+@@ -0,0 +1,17 @@
++/*
++ * Copyright 2018 The Data Transfer Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++/** Implements importers and exporters for Daybook services. */
++package org.datatransferproject.auth.generic;
+Index: extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.AuthServiceExtension
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.AuthServiceExtension b/extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.AuthServiceExtension
+new file mode 100644
+--- /dev/null	(date 1653049533934)
++++ b/extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.AuthServiceExtension	(date 1653049533934)
+@@ -0,0 +1,1 @@
++org.datatransferproject.auth.generic.GenericAuthServiceExtension
+Index: portability-transfer/src/main/java/org/datatransferproject/transfer/WorkerMain.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/portability-transfer/src/main/java/org/datatransferproject/transfer/WorkerMain.java b/portability-transfer/src/main/java/org/datatransferproject/transfer/WorkerMain.java
+--- a/portability-transfer/src/main/java/org/datatransferproject/transfer/WorkerMain.java	(revision 984dc650493b8064a9c33def99aff5ddb173e795)
++++ b/portability-transfer/src/main/java/org/datatransferproject/transfer/WorkerMain.java	(date 1652795847651)
+@@ -15,11 +15,6 @@
+  */
+ package org.datatransferproject.transfer;
+ 
+-import static org.datatransferproject.config.extension.SettingsExtensionLoader.getSettingsExtension;
+-import static org.datatransferproject.launcher.monitor.MonitorLoader.loadMonitor;
+-import static org.datatransferproject.spi.cloud.extension.CloudExtensionLoader.getCloudExtension;
+-import static org.datatransferproject.spi.transfer.hooks.JobHooksLoader.loadJobHooks;
+-
+ import com.google.api.client.http.HttpTransport;
+ import com.google.api.client.http.javanet.NetHttpTransport;
+ import com.google.api.client.json.JsonFactory;
+@@ -29,8 +24,6 @@
+ import com.google.common.util.concurrent.UncaughtExceptionHandlers;
+ import com.google.inject.Guice;
+ import com.google.inject.Injector;
+-import java.util.List;
+-import java.util.ServiceLoader;
+ import okhttp3.OkHttpClient;
+ import org.datatransferproject.api.launcher.Monitor;
+ import org.datatransferproject.config.extension.SettingsExtension;
+@@ -47,6 +40,16 @@
+ import org.datatransferproject.spi.transfer.idempotentexecutor.IdempotentImportExecutorLoader;
+ import org.datatransferproject.spi.transfer.security.SecurityExtension;
+ import org.datatransferproject.spi.transfer.security.SecurityExtensionLoader;
++import org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface;
++
++import java.util.List;
++import java.util.ServiceLoader;
++
++import static org.datatransferproject.config.extension.SettingsExtensionLoader.getSettingsExtension;
++import static org.datatransferproject.launcher.monitor.MonitorLoader.loadMonitor;
++import static org.datatransferproject.spi.cloud.extension.CloudExtensionLoader.getCloudExtension;
++import static org.datatransferproject.spi.transfer.hooks.JobHooksLoader.loadJobHooks;
++
+ 
+ /**
+  * Main class to bootstrap a portability transfer worker that will operate on a single job whose
+@@ -72,7 +75,7 @@
+     SettingsExtension settingsExtension = getSettingsExtension();
+     settingsExtension.initialize();
+     WorkerExtensionContext extensionContext =
+-        new WorkerExtensionContext(settingsExtension, monitor);
++            new WorkerExtensionContext(settingsExtension, monitor);
+ 
+     // TODO this should be moved into a service extension
+     extensionContext.registerService(HttpTransport.class, new NetHttpTransport());
+@@ -80,8 +83,8 @@
+     extensionContext.registerService(JsonFactory.class, new JacksonFactory());
+ 
+     ServiceLoader.load(ServiceExtension.class)
+-        .iterator()
+-        .forEachRemaining(serviceExtension -> serviceExtension.initialize(extensionContext));
++            .iterator()
++            .forEachRemaining(serviceExtension -> serviceExtension.initialize(extensionContext));
+ 
+     // TODO: verify that this is the cloud extension that is specified in the configuration
+     CloudExtension cloudExtension = getCloudExtension();
+@@ -99,13 +102,13 @@
+ 
+     // Load security extension and services
+     SecurityExtension securityExtension =
+-        SecurityExtensionLoader.getSecurityExtension(extensionContext);
++            SecurityExtensionLoader.getSecurityExtension(extensionContext);
+     monitor.info(() -> "Using SecurityExtension: " + securityExtension.getClass().getName());
+ 
+     IdempotentImportExecutor idempotentImportExecutor =
+-        IdempotentImportExecutorLoader.load(extensionContext);
++            IdempotentImportExecutorLoader.load(extensionContext);
+     monitor.info(
+-        () -> "Using IdempotentImportExecutor: " + idempotentImportExecutor.getClass().getName());
++            () -> "Using IdempotentImportExecutor: " + idempotentImportExecutor.getClass().getName());
+ 
+     // TODO: make configurable
+     SymmetricKeyGenerator symmetricKeyGenerator = new AesSymmetricKeyGenerator(monitor);
+@@ -115,15 +118,15 @@
+     Injector injector = null;
+     try {
+       injector =
+-          Guice.createInjector(
+-              new WorkerModule(
+-                  extensionContext,
+-                  cloudExtension,
+-                  transferExtensions,
+-                  securityExtension,
+-                  idempotentImportExecutor,
+-                  symmetricKeyGenerator,
+-                  jobHooks));
++              Guice.createInjector(
++                      new WorkerModule(
++                              extensionContext,
++                              cloudExtension,
++                              transferExtensions,
++                              securityExtension,
++                              idempotentImportExecutor,
++                              symmetricKeyGenerator,
++                              jobHooks));
+     } catch (Exception e) {
+       monitor.severe(() -> "Unable to initialize Guice in Worker", e);
+       throw e;
+@@ -144,17 +147,33 @@
+     ImmutableList.Builder<TransferExtension> extensionsBuilder = ImmutableList.builder();
+     // Note that initialization of the TransferExtension is done in the WorkerModule since they're
+     // initialized as they're requested.
++    monitor.info(
++            () -> "WORKER MAIN: getTransferExtensions");
+     ServiceLoader.load(TransferExtension.class)
+-        .iterator()
+-        .forEachRemaining(
+-            ext -> {
+-              monitor.info(
+-                  () -> "Loading transfer extension: " + ext + " for " + ext.getServiceId());
+-              extensionsBuilder.add(ext);
+-            });
++            .iterator()
++            .forEachRemaining(
++                    ext -> {
++                      monitor.info(
++                              () -> "Loading transfer extension: " + ext + " for " + ext.getServiceId() + ext.getClass().getName());
++                      if (!ext.getClass().getName().equals("GenericTransferExtension") || !ext.getClass().getName().equals("DaybookTransferExtension")) {
++                        monitor.info(
++                                () -> "Adding: " + ext);
++                        extensionsBuilder.add(ext);
++                      }
++                    });
++    ServiceLoader.load(GenericTransferExtensionInterface.class)
++            .iterator()
++            .forEachRemaining(
++                    ext -> {
++                      monitor.info(
++                              () -> "LOADING TRANSFER EXTENSION INTERFACE: " + ext);
++                      extensionsBuilder.addAll(ext.getGenericTransferExtensions());
++                    });
+     ImmutableList<TransferExtension> extensions = extensionsBuilder.build();
++    monitor.info(
++            () -> "WORKER MAIN: getTransferExtensions EXTENSIONS LOADED");
+     Preconditions.checkState(
+-        !extensions.isEmpty(), "Could not find any implementations of TransferExtension");
++            !extensions.isEmpty(), "Could not find any implementations of TransferExtension");
+     return extensions;
+   }
+ }
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface b/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface
+new file mode 100644
+--- /dev/null	(date 1653382804062)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface	(date 1653382804062)
+@@ -0,0 +1,1 @@
++org.datatransferproject.datatransfer.generic.GenericTransferExtensions
+Index: extensions/data-transfer/portability-data-transfer-generic/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/build.gradle b/extensions/data-transfer/portability-data-transfer-generic/build.gradle
+new file mode 100644
+--- /dev/null	(date 1652718177727)
++++ b/extensions/data-transfer/portability-data-transfer-generic/build.gradle	(date 1652718177727)
+@@ -0,0 +1,35 @@
++/*
++ *  Copyright 2018 The Data Transfer Project Authors.
++ * 
++ *  Licensed under the Apache License, Version 2.0 (the "License");
++ *  you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++plugins {
++    id 'maven'
++    id 'signing'
++}
++
++dependencies {
++    compile project(':portability-spi-cloud')
++    compile project(':portability-spi-transfer')
++    compile project(':portability-api')
++    compile project(':portability-transfer:')
++    
++    compile("com.google.api-client:google-api-client:${googleApiClient}")
++    compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
++    compile("com.google.guava:guava:${guavaVersion}")
++
++   testCompile("org.mockito:mockito-core:${mockitoVersion}")
++}
++
++configurePublication(project)
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.TransferExtension
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.TransferExtension b/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.TransferExtension
+new file mode 100644
+--- /dev/null	(date 1652869642945)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.transfer.extension.TransferExtension	(date 1652869642945)
+@@ -0,0 +1,1 @@
++org.datatransferproject.datatransfer.generic.GenericTransferExtension
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericConfigSpecification.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericConfigSpecification.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericConfigSpecification.java
+new file mode 100644
+--- /dev/null	(date 1652717043944)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericConfigSpecification.java	(date 1652717043944)
+@@ -0,0 +1,41 @@
++// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
++
++package org.datatransferproject.datatransfer.generic;
++
++import com.fasterxml.jackson.annotation.JsonProperty;
++import java.util.List;
++
++public class GenericConfigSpecification {
++  @JsonProperty("serviceID")
++  private String serviceID;
++
++  @JsonProperty("baseURL")
++  private String baseURL;
++
++  @JsonProperty(value = "supportedDataTypes", required = true)
++  private List<String> supportedDataTypes;
++
++  public GenericConfigSpecification() {
++    super();
++  }
++
++  public GenericConfigSpecification(
++      @JsonProperty("serviceID") String serviceID,
++      @JsonProperty("baseURL") String baseURL,
++      @JsonProperty("supportedDataTypes") List<String> supportedDataTypes) {
++    this.serviceID = serviceID;
++    this.baseURL = baseURL;
++    this.supportedDataTypes = supportedDataTypes;
++  }
++
++  public String getServiceID() {
++    return this.serviceID;
++  }
++
++  public String getBaseURL() {
++    return this.baseURL;
++  }
++  public List<String> getSupportedDataTypes() {
++    return this.supportedDataTypes;
++  }
++}
+Index: portability-spi-transfer/src/main/java/org/datatransferproject/spi/transfer/extension/GenericTransferExtensionInterface.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/portability-spi-transfer/src/main/java/org/datatransferproject/spi/transfer/extension/GenericTransferExtensionInterface.java b/portability-spi-transfer/src/main/java/org/datatransferproject/spi/transfer/extension/GenericTransferExtensionInterface.java
+new file mode 100644
+--- /dev/null	(date 1652793667596)
++++ b/portability-spi-transfer/src/main/java/org/datatransferproject/spi/transfer/extension/GenericTransferExtensionInterface.java	(date 1652793667596)
+@@ -0,0 +1,11 @@
++// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
++
++package org.datatransferproject.spi.transfer.extension;
++
++import org.datatransferproject.api.launcher.AbstractExtension;
++
++import java.util.List;
++
++public interface GenericTransferExtensionInterface extends AbstractExtension {
++  List<TransferExtension> getGenericTransferExtensions();
++}
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtension.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtension.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtension.java
+new file mode 100644
+--- /dev/null	(date 1653304037042)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtension.java	(date 1653304037042)
+@@ -0,0 +1,109 @@
++/*
++ * Copyright 2019 The Data Transfer Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.datatransferproject.datatransfer.generic;
++
++import com.fasterxml.jackson.databind.DeserializationFeature;
++import com.fasterxml.jackson.databind.ObjectMapper;
++import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
++import com.google.common.base.Preconditions;
++import com.google.common.collect.ImmutableMap;
++import java.io.IOException;
++import java.net.URL;
++import java.util.List;
++import okhttp3.OkHttpClient;
++import org.datatransferproject.api.launcher.ExtensionContext;
++import org.datatransferproject.api.launcher.Monitor;
++import org.datatransferproject.spi.cloud.storage.TemporaryPerJobDataStore;
++import org.datatransferproject.spi.transfer.extension.TransferExtension;
++import org.datatransferproject.spi.transfer.provider.Exporter;
++import org.datatransferproject.spi.transfer.provider.Importer;
++import org.datatransferproject.datatransfer.generic.photos.GenericPhotosImporter;
++import org.datatransferproject.datatransfer.generic.social.DaybookPostsImporter;
++
++/* Generic transfer extension */
++public class GenericTransferExtension implements TransferExtension {
++  private GenericConfigSpecification configSpec = null;
++  private String configFileName;
++
++  private boolean initialized = false;
++  private ImmutableMap<String, Importer> importerMap;
++
++  public GenericTransferExtension(String configFileName) {
++    this.configFileName = configFileName;
++  }
++
++  public GenericConfigSpecification readConfigFile(String configFileName) throws IOException {
++    URL resource = getClass().getClassLoader().getResource(configFileName);
++    return new ObjectMapper(new YAMLFactory())
++        .findAndRegisterModules()
++        .readValue(resource, GenericConfigSpecification.class);
++  }
++
++  @Override
++  public void initialize(ExtensionContext context) {
++    Monitor monitor = context.getMonitor();
++    if (initialized) {
++      monitor.severe(() -> "GenericTransferExtension is already initialized");
++      return;
++    }
++
++    ObjectMapper mapper =
++        new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
++    OkHttpClient client = context.getService(OkHttpClient.class);
++    TemporaryPerJobDataStore jobStore = context.getService(TemporaryPerJobDataStore.class);
++
++    ImmutableMap.Builder<String, Importer> importerBuilder = ImmutableMap.builder();
++    importerBuilder.put(
++        "PHOTOS",
++        new GenericPhotosImporter(monitor, client, mapper, jobStore, configSpec.getBaseURL()));
++    importerBuilder.put(
++        "SOCIAL-POSTS", new DaybookPostsImporter(monitor, client, mapper, configSpec.getBaseURL()));
++    importerMap = importerBuilder.build();
++    initialized = true;
++  }
++
++  private void setConfigParams(String configFileName) {
++    try {
++      configSpec = readConfigFile(configFileName);
++    } catch (IOException e) {
++      e.printStackTrace();
++    }
++    ;
++  }
++
++  @Override
++  public String getServiceId() {
++    setConfigParams(configFileName);
++    return this.configSpec.getServiceID();
++  }
++
++  @Override
++  public Importer<?, ?> getImporter(String transferDataType) {
++    Preconditions.checkArgument(
++        initialized, "The transfer extension is not initialized. Unable to get Importer");
++    List<String> supportedDataTypes = configSpec.getSupportedDataTypes();
++    Preconditions.checkArgument(
++        supportedDataTypes.contains(transferDataType),
++        "The transfer extension doesn't support " + transferDataType);
++    return importerMap.get(transferDataType);
++  }
++
++  @Override
++  public Exporter<?, ?> getExporter(String transferDataType) {
++    throw new IllegalArgumentException();
++  }
++}
+Index: portability-spi-api/src/main/java/org/datatransferproject/spi/api/auth/extension/GenericAuthServiceExtensions.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/portability-spi-api/src/main/java/org/datatransferproject/spi/api/auth/extension/GenericAuthServiceExtensions.java b/portability-spi-api/src/main/java/org/datatransferproject/spi/api/auth/extension/GenericAuthServiceExtensions.java
+new file mode 100644
+--- /dev/null	(date 1653057027793)
++++ b/portability-spi-api/src/main/java/org/datatransferproject/spi/api/auth/extension/GenericAuthServiceExtensions.java	(date 1653057027793)
+@@ -0,0 +1,9 @@
++package org.datatransferproject.spi.api.auth.extension;
++
++import org.datatransferproject.api.launcher.AbstractExtension;
++
++import java.util.List;
++
++public interface GenericAuthServiceExtensions extends AbstractExtension {
++    List<AuthServiceExtension> getGenericTransferExtensions();
++}
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtensions.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtensions.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtensions.java
+new file mode 100644
+--- /dev/null	(date 1653049882082)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/GenericTransferExtensions.java	(date 1653049882082)
+@@ -0,0 +1,55 @@
++// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
++
++package org.datatransferproject.datatransfer.generic;
++
++import com.fasterxml.jackson.databind.ObjectMapper;
++import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
++import java.io.File;
++import java.io.IOException;
++import java.net.URL;
++import java.util.List;
++
++import org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface;
++import org.datatransferproject.api.launcher.ExtensionContext;
++import org.datatransferproject.spi.transfer.extension.TransferExtension;
++
++public class GenericTransferExtensions implements GenericTransferExtensionInterface {
++  private final String CONFIG_PATH = "configs/";
++  private List<TransferExtension> genericTransferExtensions;
++
++  public GenericTransferExtensions() {}
++
++  @Override
++  public void initialize(ExtensionContext context) {
++    // Iterate through config files
++    try {
++      File[] configFiles = getResourceFiles(CONFIG_PATH);
++      for (File file : configFiles) {
++        String fileName = file.getName();
++        if (fileName.endsWith(".yaml")) {
++          genericTransferExtensions.add(new GenericTransferExtension(fileName));
++        }
++      }
++    } catch (IOException e) {
++      e.printStackTrace();
++    }
++  }
++
++  @Override
++  public List<TransferExtension> getGenericTransferExtensions() {
++    return genericTransferExtensions;
++  }
++
++  public GenericConfigSpecification readConfigFile(String configFileName) throws IOException {
++    URL resource = getClass().getClassLoader().getResource(configFileName);
++    return new ObjectMapper(new YAMLFactory())
++        .findAndRegisterModules()
++        .readValue(resource, GenericConfigSpecification.class);
++  }
++
++  private File[] getResourceFiles(String configPath) throws IOException {
++    URL resource = getClass().getClassLoader().getResource(configPath);
++    String path = resource.getPath();
++    return new File(path).listFiles();
++  }
++}
+Index: extensions/auth/portability-auth-generic/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/build.gradle b/extensions/auth/portability-auth-generic/build.gradle
+new file mode 100644
+--- /dev/null	(date 1652791587299)
++++ b/extensions/auth/portability-auth-generic/build.gradle	(date 1652791587299)
+@@ -0,0 +1,31 @@
++/*
++ * Copyright 2021 The Data Transfer Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++plugins {
++    id 'maven'
++    id 'signing'
++}
++
++dependencies {
++    compile project(':portability-spi-api')
++    compile project(':portability-spi-cloud')
++    compile project(':libraries:auth')
++
++    compile("com.google.oauth-client:google-oauth-client:${googleApiClient}")
++    compile("com.google.http-client:google-http-client-jackson2:${googleHttpClientVersion}")
++}
++
++configurePublication(project)
+\ No newline at end of file
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	(revision 984dc650493b8064a9c33def99aff5ddb173e795)
++++ b/settings.gradle	(date 1653057162491)
+@@ -83,5 +83,9 @@
+ include ':extensions:auth:portability-auth-offline-demo'
+ include ':extensions:data-transfer:portability-data-transfer-offline-demo'
+ 
++include ':extensions:auth:portability-auth-generic'
++include 'extensions:data-transfer:portability-data-transfer-generic'
++
++
+ include ':client'
+ include ':client-rest'
+Index: extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.GenericAuthServiceExtensionLoader
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.GenericAuthServiceExtensionLoader b/extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.GenericAuthServiceExtensionLoader
+new file mode 100644
+--- /dev/null	(date 1653057278043)
++++ b/extensions/auth/portability-auth-generic/src/main/resources/META-INF/services/org.datatransferproject.spi.api.auth.extension.GenericAuthServiceExtensionLoader	(date 1653057278043)
+@@ -0,0 +1,1 @@
++org.datatransferproject.auth.generic.GenericAuthServiceExtensionsLoader
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhotosImporter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhotosImporter.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhotosImporter.java
+new file mode 100644
+--- /dev/null	(date 1653321840312)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhotosImporter.java	(date 1653321840312)
+@@ -0,0 +1,181 @@
++/*
++ * Copyright 2021 The Data-Portability Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.datatransferproject.datatransfer.generic.photos;
++
++import com.fasterxml.jackson.databind.ObjectMapper;
++import com.google.common.base.Preconditions;
++import com.google.common.base.Strings;
++import com.google.common.io.ByteStreams;
++import java.io.IOException;
++import java.io.InputStream;
++import java.net.URL;
++import java.util.Base64;
++import java.util.UUID;
++import okhttp3.*;
++import org.datatransferproject.api.launcher.Monitor;
++import org.datatransferproject.spi.cloud.storage.TemporaryPerJobDataStore;
++import org.datatransferproject.spi.transfer.idempotentexecutor.IdempotentImportExecutor;
++import org.datatransferproject.spi.transfer.provider.ImportResult;
++import org.datatransferproject.spi.transfer.provider.Importer;
++import org.datatransferproject.transfer.JobMetadata;
++import org.datatransferproject.types.common.models.photos.PhotoAlbum;
++import org.datatransferproject.types.common.models.photos.PhotoModel;
++import org.datatransferproject.types.common.models.photos.PhotosContainerResource;
++import org.datatransferproject.types.transfer.auth.TokensAndUrlAuthData;
++
++/** Imports albums and photos to Daybook */
++public class GenericPhotosImporter
++    implements Importer<TokensAndUrlAuthData, PhotosContainerResource> {
++
++  private final OkHttpClient client;
++  private final ObjectMapper objectMapper;
++  private final TemporaryPerJobDataStore jobStore;
++  private final Monitor monitor;
++  private final String baseUrl;
++
++  public GenericPhotosImporter(
++      Monitor monitor,
++      OkHttpClient client,
++      ObjectMapper objectMapper,
++      TemporaryPerJobDataStore jobStore,
++      String baseUrl) {
++    this.client = client;
++    this.objectMapper = objectMapper;
++    this.jobStore = jobStore;
++    this.monitor = monitor;
++    this.baseUrl = baseUrl;
++  }
++
++  @Override
++  public ImportResult importItem(
++      UUID jobId,
++      IdempotentImportExecutor executor,
++      TokensAndUrlAuthData authData,
++      PhotosContainerResource resource)
++      throws Exception {
++    if (resource == null) {
++      // Nothing to import
++      return ImportResult.OK;
++    }
++
++    monitor.debug(() -> String.format("Number of Photos: %d", resource.getPhotos().size()));
++
++    // Import albums
++    for (PhotoAlbum album : resource.getAlbums()) {
++      executor.executeAndSwallowIOExceptions(
++          album.getId(), album.getName(), () -> importAlbum(album, authData));
++    }
++
++    // Import photos
++    for (PhotoModel photo : resource.getPhotos()) {
++      executor.executeAndSwallowIOExceptions(
++          photo.getDataId(),
++          photo.getTitle(),
++          () -> {
++            String albumId;
++            if (Strings.isNullOrEmpty(photo.getAlbumId())) {
++              albumId = null;
++            } else {
++              albumId = executor.getCachedValue(photo.getAlbumId());
++            }
++            return importPhoto(photo, jobId, authData, albumId);
++          });
++    }
++
++    // API to trigger daybook API
++
++    return new ImportResult(ImportResult.ResultType.OK);
++  }
++
++  private String importAlbum(PhotoAlbum album, TokensAndUrlAuthData authData) throws IOException {
++    String description = album.getDescription();
++    String album_name = album.getName();
++    monitor.debug(() -> String.format("Album Name: %s", album_name));
++    if (!Strings.isNullOrEmpty(description)) {
++      monitor.debug(() -> String.format("Album description: %s", description));
++    }
++
++    return album_name;
++  }
++
++  private int importPhoto(
++      PhotoModel photoModel, UUID jobId, TokensAndUrlAuthData authData, String newAlbumId)
++      throws IOException {
++    InputStream inputStream = null;
++    String albumId = photoModel.getAlbumId();
++    String imageDescription = photoModel.getDescription();
++    String title = photoModel.getTitle();
++
++    if (photoModel.isInTempStore()) {
++      inputStream = jobStore.getStream(jobId, photoModel.getFetchableUrl()).getStream();
++    } else if (photoModel.getFetchableUrl() != null) {
++      inputStream = new URL(photoModel.getFetchableUrl()).openStream();
++    } else {
++      monitor.severe(() -> "Can't get inputStream for a photo");
++      return -1;
++    }
++
++    byte[] imageBytes = ByteStreams.toByteArray(inputStream);
++    String imageData = Base64.getEncoder().encodeToString(imageBytes);
++
++    Request.Builder requestBuilder = new Request.Builder().url(baseUrl);
++    requestBuilder.header("token", authData.getAccessToken());
++
++    FormBody.Builder builder = new FormBody.Builder().add("image", imageData);
++    builder.add("exporter", JobMetadata.getExportService());
++
++    if (!Strings.isNullOrEmpty(newAlbumId)) {
++      builder.add("album", newAlbumId);
++    }
++
++    if (!Strings.isNullOrEmpty(title)) {
++      builder.add("title", title);
++    }
++
++    if (!Strings.isNullOrEmpty(imageDescription)) {
++      builder.add("description", imageDescription);
++    }
++    FormBody formBody = builder.build();
++    requestBuilder.post(formBody);
++
++    /*GenericPhoto photo = new GenericPhoto();
++    photo.setImage(imageData);
++    photo.setTitle(title);
++    photo.setDescription(imageDescription);
++    photo.setExporter(JobMetadata.getExportService());
++    photo.setAlbum(newAlbumId);
++
++    String photoString = objectMapper.writeValueAsString(photo);
++    RequestBody body = RequestBody.create(MediaType.parse("application/json"), photoString);
++    requestBuilder.post(body);*/
++
++    try (Response response = client.newCall(requestBuilder.build()).execute()) {
++      int code = response.code();
++      // Though sometimes it returns error code for success requests
++      Preconditions.checkArgument(
++          code >= 200 && code <= 299,
++          String.format(
++              "Error occurred in request for %s, code: %s, message: %s",
++              baseUrl, code, response.message()));
++
++      if (photoModel.isInTempStore()) {
++        jobStore.removeData(jobId, photoModel.getFetchableUrl());
++      }
++      return response.code();
++    }
++  }
++}
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/social/DaybookPostsImporter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/social/DaybookPostsImporter.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/social/DaybookPostsImporter.java
+new file mode 100644
+--- /dev/null	(date 1652717043937)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/social/DaybookPostsImporter.java	(date 1652717043937)
+@@ -0,0 +1,165 @@
++/*
++ * Copyright 2021 The Data-Portability Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.datatransferproject.datatransfer.generic.social;
++
++import com.fasterxml.jackson.core.JsonProcessingException;
++import com.fasterxml.jackson.databind.ObjectMapper;
++import java.io.IOException;
++import java.util.Collection;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.UUID;
++import java.util.stream.Collectors;
++import okhttp3.*;
++import org.datatransferproject.api.launcher.Monitor;
++import org.datatransferproject.spi.transfer.idempotentexecutor.IdempotentImportExecutor;
++import org.datatransferproject.spi.transfer.provider.ImportResult;
++import org.datatransferproject.spi.transfer.provider.Importer;
++import org.datatransferproject.transfer.JobMetadata;
++import org.datatransferproject.types.common.models.social.SocialActivityAttachment;
++import org.datatransferproject.types.common.models.social.SocialActivityAttachmentType;
++import org.datatransferproject.types.common.models.social.SocialActivityContainerResource;
++import org.datatransferproject.types.common.models.social.SocialActivityModel;
++import org.datatransferproject.types.common.models.social.SocialActivityType;
++import org.datatransferproject.types.transfer.auth.TokensAndUrlAuthData;
++
++/** Imports posts to Daybook */
++public class DaybookPostsImporter
++    implements Importer<TokensAndUrlAuthData, SocialActivityContainerResource> {
++
++  private final Monitor monitor;
++  private final ObjectMapper objectMapper;
++  private final OkHttpClient client;
++  private final String baseUrl;
++
++  public DaybookPostsImporter(
++      Monitor monitor, OkHttpClient client, ObjectMapper objectMapper, String baseUrl) {
++    this.baseUrl = baseUrl;
++    this.client = client;
++    this.monitor = monitor;
++    this.objectMapper = objectMapper;
++  }
++
++  @Override
++  public ImportResult importItem(
++      UUID jobId,
++      IdempotentImportExecutor executor,
++      TokensAndUrlAuthData authData,
++      SocialActivityContainerResource resource)
++      throws Exception {
++    if (resource == null) {
++      // Nothing to import
++      return ImportResult.OK;
++    }
++
++    monitor.debug(
++        () -> String.format("Number of Posts: %d", resource.getCounts().get("activitiesCount")));
++
++    // Import social activity
++    for (SocialActivityModel activity : resource.getActivities()) {
++      if (activity.getType() == SocialActivityType.NOTE
++          || activity.getType() == SocialActivityType.POST) {
++        executor.executeAndSwallowIOExceptions(
++            Integer.toString(activity.hashCode()),
++            activity.getTitle(),
++            () -> insertActivity(executor, activity, authData));
++      }
++    }
++
++    return new ImportResult(ImportResult.ResultType.OK);
++  }
++
++  private String insertActivity(
++      IdempotentImportExecutor executor,
++      SocialActivityModel activity,
++      TokensAndUrlAuthData authData)
++      throws IOException {
++    Map<String, String> imageMap = new HashMap<>();
++    Map<String, String> linkMap = new HashMap<>();
++
++    String content = activity.getContent() == null ? "" : activity.getContent();
++    String title = activity.getTitle() == null ? "" : activity.getTitle();
++    String location =
++        activity.getLocation() == null || activity.getLocation().getName() == null
++            ? ""
++            : activity.getLocation().getName();
++    String published =
++        activity.getPublished().toString() == null ? "" : activity.getPublished().toString();
++
++    Request.Builder requestBuilder = new Request.Builder().url(baseUrl);
++    requestBuilder.header("token", authData.getAccessToken());
++
++    FormBody.Builder builder = new FormBody.Builder().add("type", "POSTS");
++    builder.add("exporter", JobMetadata.getExportService());
++    builder.add("content", content);
++    builder.add("title", title);
++    builder.add("location", location);
++    builder.add("published", published);
++
++    Collection<SocialActivityAttachment> linkAttachments =
++        activity.getAttachments().stream()
++            .filter(attachment -> attachment.getType() == SocialActivityAttachmentType.LINK)
++            .collect(Collectors.toList());
++    Collection<SocialActivityAttachment> imageAttachments =
++        activity.getAttachments().stream()
++            .filter(attachment -> attachment.getType() == SocialActivityAttachmentType.IMAGE)
++            .collect(Collectors.toList());
++
++    // Just put link attachments at the bottom of the post, as we
++    // don't know how they were laid out in the originating service.
++    if (!linkAttachments.isEmpty()) {
++
++      for (SocialActivityAttachment attachment : linkAttachments) {
++        linkMap.put(attachment.getName(), attachment.getUrl());
++      }
++      try {
++        String json = objectMapper.writeValueAsString(linkMap);
++        builder.add("link", json);
++      } catch (JsonProcessingException e) {
++        monitor.info(() -> String.format("Error processing JSON: %s", e.getMessage()));
++      }
++    }
++
++    if (!imageAttachments.isEmpty()) {
++
++      for (SocialActivityAttachment image : imageAttachments) {
++        imageMap.put(image.getName() != null ? image.getName() : image.getUrl(), image.getUrl());
++      }
++      try {
++        String json = objectMapper.writeValueAsString(imageMap);
++        builder.add("image", json);
++      } catch (JsonProcessingException e) {
++        monitor.info(() -> String.format("Error processing JSON: %s", e.getMessage()));
++      }
++    }
++
++    FormBody formBody = builder.build();
++    requestBuilder.post(formBody);
++
++    try (Response response = client.newCall(requestBuilder.build()).execute()) {
++      int code = response.code();
++      // Though sometimes it returns error code for success requests
++      if (code < 200 || code > 299) {
++        throw new IOException(
++            String.format(
++                "Error occurred in request for adding entry, message: %s", response.message()));
++      }
++
++      return response.message();
++    }
++  }
++}
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/package-info.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/package-info.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/package-info.java
+new file mode 100644
+--- /dev/null	(date 1652716998655)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/package-info.java	(date 1652716998655)
+@@ -0,0 +1,17 @@
++/*
++ * Copyright 2020 The Data Transfer Project Authors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * https://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.datatransferproject.datatransfer.generic;
+Index: extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtensionsLoader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtensionsLoader.java b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtensionsLoader.java
+new file mode 100644
+--- /dev/null	(date 1653062456652)
++++ b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthServiceExtensionsLoader.java	(date 1653062456652)
+@@ -0,0 +1,65 @@
++// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
++
++package org.datatransferproject.auth.generic;
++
++import com.fasterxml.jackson.databind.ObjectMapper;
++import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
++import org.datatransferproject.api.launcher.ExtensionContext;
++import org.datatransferproject.spi.api.auth.extension.AuthServiceExtension;
++import org.datatransferproject.spi.api.auth.extension.GenericAuthServiceExtensions;
++
++import java.io.File;
++import java.io.IOException;
++import java.net.URL;
++import java.util.List;
++
++
++public class GenericAuthServiceExtensionsLoader implements GenericAuthServiceExtensions {
++    private final String CONFIG_PATH = "configs/";
++    private List<AuthServiceExtension> genericAuthServiceExtensions;
++
++    @Override
++    public void initialize(ExtensionContext context) {
++        // Iterate through config files
++        try {
++            File[] configFiles = getResourceFiles(CONFIG_PATH);
++            for (File file : configFiles) {
++                String fileName = file.getName();
++                if (fileName.endsWith(".yaml")) {
++                    GenericOAuthConfig genericOAuthConfig = new GenericOAuthConfig(readConfigFile(fileName));
++                    genericAuthServiceExtensions.add(new GenericAuthServiceExtension(genericOAuthConfig));
++                }
++            }
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++    }
++
++    @Override
++    public List<AuthServiceExtension> getGenericTransferExtensions() {
++        return genericAuthServiceExtensions;
++    }
++
++    public GenericAuthSpecification readConfigFile(String configFileName) throws IOException {
++        URL resource = getClass().getClassLoader().getResource(configFileName);
++        return new ObjectMapper(new YAMLFactory())
++                .findAndRegisterModules()
++                .readValue(resource, GenericAuthSpecification.class);
++    }
++
++    private GenericAuthSpecification setConfigParams(String configFileName) {
++        try {
++            return readConfigFile(configFileName);
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++        ;
++        return null;
++    }
++
++    private File[] getResourceFiles(String configPath) throws IOException {
++        URL resource = getClass().getClassLoader().getResource(configPath);
++        String path = resource.getPath();
++        return new File(path).listFiles();
++    }
++}
+Index: extensions/auth/portability-auth-generic/src/main/resources/configs/Daybook.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/resources/configs/Daybook.yaml b/extensions/auth/portability-auth-generic/src/main/resources/configs/Daybook.yaml
+new file mode 100644
+--- /dev/null	(date 1653055184902)
++++ b/extensions/auth/portability-auth-generic/src/main/resources/configs/Daybook.yaml	(date 1653055184902)
+@@ -0,0 +1,4 @@
++serviceName: "Daybook"
++authURL: "https://us-central1-diary-a77f6.cloudfunctions.net/post-daybook-dtp"
++exportScopes: ["PHOTOS: db.read"]
++importScopes: ["PHOTOS: db.write"]
+Index: extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhoto.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhoto.java b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhoto.java
+new file mode 100644
+--- /dev/null	(date 1653321133706)
++++ b/extensions/data-transfer/portability-data-transfer-generic/src/main/java/org.datatransferproject.datatransfer.generic/photos/GenericPhoto.java	(date 1653321133706)
+@@ -0,0 +1,60 @@
++package org.datatransferproject.datatransfer.generic.photos;
++
++import com.fasterxml.jackson.annotation.JsonProperty;
++
++public class GenericPhoto {
++    @JsonProperty("image")
++    private String image;
++
++    @JsonProperty("album")
++    private String album;
++
++    @JsonProperty("title")
++    private String title;
++
++    @JsonProperty("description")
++    private String description;
++
++    @JsonProperty("exporter")
++    private String exporter;
++
++    public String getImage() {
++        return image;
++    }
++
++    public void setImage(String image) {
++        this.image = image;
++    }
++
++    public String getAlbum() {
++        return album;
++    }
++
++    public void setAlbum(String album) {
++        this.album = album;
++    }
++
++    public String getTitle() {
++        return title;
++    }
++
++    public void setTitle(String title) {
++        this.title = title;
++    }
++
++    public String getDescription() {
++        return description;
++    }
++
++    public void setDescription(String description) {
++        this.description = description;
++    }
++
++    public String getExporter() {
++        return description;
++    }
++
++    public void setExporter(String description) {
++        this.description = description;
++    }
++}
+Index: extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthSpecification.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthSpecification.java b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthSpecification.java
+new file mode 100644
+--- /dev/null	(date 1653058718515)
++++ b/extensions/auth/portability-auth-generic/src/main/java/org/datatransferproject/auth/generic/GenericAuthSpecification.java	(date 1653058718515)
+@@ -0,0 +1,62 @@
++// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
++
++package org.datatransferproject.auth.generic;
++
++import com.fasterxml.jackson.annotation.JsonProperty;
++import java.util.List;
++import java.util.Map;
++import java.util.Set;
++
++public class GenericAuthSpecification {
++  @JsonProperty("serviceName")
++  private String serviceName;
++
++  @JsonProperty("authURL")
++  private String authURL;
++
++  @JsonProperty("tokenURL")
++  private String tokenURL;
++
++  @JsonProperty("exportScopes")
++  private Map<String, Set<String>> exportScopes;
++
++  @JsonProperty("importScopes")
++  private Map<String, Set<String>> importScopes;
++
++  public GenericAuthSpecification() {
++    super();
++  }
++
++  public GenericAuthSpecification(
++      @JsonProperty("serviceName") String serviceName,
++      @JsonProperty("authURL") String authURL,
++      @JsonProperty("tokenURL") String tokenURL,
++      @JsonProperty("exportScopes") Map<String, Set<String>> exportScopes,
++      @JsonProperty("importScopes") Map<String, Set<String>> importScopes) {
++    this.serviceName = serviceName;
++    this.authURL = authURL;
++    this.tokenURL = tokenURL;
++    this.exportScopes = exportScopes;
++    this.importScopes = importScopes;
++  }
++
++  public String getServiceName() {
++    return this.serviceName;
++  }
++
++  public String getAuthURL() {
++    return this.authURL;
++  }
++
++  public String getTokenURL() {
++    return this.tokenURL;
++  }
++
++  public Map<String, Set<String>> getExportScopes() {
++    return this.exportScopes;
++  }
++
++  public Map<String, Set<String>> getImportScopes() {
++    return this.importScopes;
++  }
++}
