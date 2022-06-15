@@ -1,4 +1,0 @@
-serviceName: "Daybook"
-authURL: "https://us-central1-diary-a77f6.cloudfunctions.net/post-daybook-dtp"
-exportScopes: "PHOTOS: [db.read]"
-importScopes: "PHOTOS: [db.write]"

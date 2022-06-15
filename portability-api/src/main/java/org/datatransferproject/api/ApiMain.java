@@ -33,7 +33,6 @@ import org.datatransferproject.launcher.types.TypeManagerImpl;
 import org.datatransferproject.security.AesSymmetricKeyGenerator;
 import org.datatransferproject.security.SymmetricKeyGenerator;
 import org.datatransferproject.spi.api.auth.extension.AuthServiceExtension;
-import org.datatransferproject.spi.api.auth.extension.GenericAuthServiceExtensions;
 import org.datatransferproject.spi.api.token.TokenManager;
 import org.datatransferproject.spi.api.transport.TransportBinder;
 import org.datatransferproject.spi.cloud.extension.CloudExtension;
@@ -145,13 +144,6 @@ public class ApiMain {
               authServiceExtension.initialize(extensionContext);
               authServiceExtensions.add(authServiceExtension);
             });
-    ServiceLoader.load(GenericAuthServiceExtensions.class)
-            .iterator()
-            .forEachRemaining(
-                    (authServiceExtensionLoader) -> {
-                      authServiceExtensionLoader.initialize(extensionContext);
-                      authServiceExtensions.addAll(authServiceExtensionLoader.getGenericTransferExtensions());
-                    });
 
     // TODO: make configurable
     SymmetricKeyGenerator keyGenerator = new AesSymmetricKeyGenerator(monitor);

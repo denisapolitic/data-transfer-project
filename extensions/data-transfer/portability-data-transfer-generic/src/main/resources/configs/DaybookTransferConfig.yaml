@@ -1,3 +1,0 @@
-serviceID: "Daybook"
-baseURL: "https://us-central1-diary-a77f6.cloudfunctions.net/post-daybook-dtp"
-supportedDataTypes: ["PHOTOS", "SOCIAL-POSTS"]
