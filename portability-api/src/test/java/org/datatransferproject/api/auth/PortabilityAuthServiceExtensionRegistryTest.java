@@ -18,6 +18,10 @@ package org.datatransferproject.api.auth;
 
 import static org.datatransferproject.types.common.models.DataVertical.CONTACTS;
 import static org.datatransferproject.types.common.models.DataVertical.PHOTOS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,15 +35,10 @@ import org.datatransferproject.spi.api.auth.AuthDataGenerator;
 import org.datatransferproject.spi.api.auth.AuthServiceProviderRegistry;
 import org.datatransferproject.spi.api.auth.extension.AuthServiceExtension;
 import org.datatransferproject.types.common.models.DataVertical;
-import org.junit.Assert;
-import org.junit.Rule;
 
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 public class PortabilityAuthServiceExtensionRegistryTest {
-
-  @Rule public ExpectedException thrown = ExpectedException.none();
 
   private AuthServiceExtension getMockedAuthProvider(
       List<DataVertical> supportedImportTypes, List<DataVertical> supportedExportTypes, String serviceId) {
@@ -59,12 +58,12 @@ public class PortabilityAuthServiceExtensionRegistryTest {
 
     AuthServiceExtension mockAuthProvider = getMockedAuthProvider(
         supportedImportTypes, supportedExportTypes, "mockAuthProvider");
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("available for import but not export");
 
-    AuthServiceProviderRegistry registry =
-        new PortabilityAuthServiceProviderRegistry(
-            ImmutableMap.of("mockServiceProvider", mockAuthProvider));
+    Throwable throwable = assertThrows(IllegalArgumentException.class, () -> {
+      new PortabilityAuthServiceProviderRegistry(
+          ImmutableMap.of("mockServiceProvider", mockAuthProvider));
+    });
+    assertTrue(throwable.getMessage().contains("available for import but not export"));
   }
 
   @Test
@@ -83,7 +82,7 @@ public class PortabilityAuthServiceExtensionRegistryTest {
     final DataVertical[] services = new DataVertical[] {PHOTOS, CONTACTS};
     Set<DataVertical> expected = new HashSet<>(Arrays.asList(services));
 
-    Assert.assertEquals(actual, expected);
+    assertEquals(actual, expected);
   }
 
   @Test
@@ -105,7 +104,7 @@ public class PortabilityAuthServiceExtensionRegistryTest {
     final String[] services = new String[]{"mockAuthProvider1", "mockAuthProvider2"};
     Set<String> expected = new HashSet<>(Arrays.asList(services));
 
-    Assert.assertEquals(actual, expected);
+    assertEquals(actual, expected);
   }
 
   @Test
@@ -127,7 +126,7 @@ public class PortabilityAuthServiceExtensionRegistryTest {
     final String[] services = new String[] {"mockAuthProvider1"};
     Set<String> expected = new HashSet<>(Arrays.asList(services));
 
-    Assert.assertEquals(actual, expected);
+    assertEquals(actual, expected);
   }
 
   @Test
@@ -148,7 +147,7 @@ public class PortabilityAuthServiceExtensionRegistryTest {
     final String[] services = new String[]{"mockAuthProvider1", "mockAuthProvider2"};
     Set<String> expected = new HashSet<>(Arrays.asList(services));
 
-    Assert.assertEquals(actual, expected);
+    assertEquals(actual, expected);
   }
 
   @Test
@@ -170,7 +169,7 @@ public class PortabilityAuthServiceExtensionRegistryTest {
     final String[] services = new String[] {"mockAuthProvider1"};
     Set<String> expected = new HashSet<>(Arrays.asList(services));
 
-    Assert.assertEquals(actual, expected);
+    assertEquals(actual, expected);
   }
 
   @Test
@@ -190,6 +189,6 @@ public class PortabilityAuthServiceExtensionRegistryTest {
     AuthDataGenerator actual = registry.getAuthDataGenerator(
         "mockServiceProvider", CONTACTS, AuthServiceProviderRegistry.AuthMode.EXPORT);
 
-    Assert.assertNotNull(actual);
+    assertNotNull(actual);
   }
 }
