@@ -16,25 +16,25 @@
 
 package org.datatransferproject.datatransfer.backblaze.photos;
 
+import static java.lang.String.format;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.UUID;
 import org.datatransferproject.api.launcher.Monitor;
 import org.datatransferproject.datatransfer.backblaze.common.BackblazeDataTransferClient;
 import org.datatransferproject.datatransfer.backblaze.common.BackblazeDataTransferClientFactory;
+import org.datatransferproject.spi.cloud.connection.ConnectionProvider;
 import org.datatransferproject.spi.cloud.storage.TemporaryPerJobDataStore;
 import org.datatransferproject.spi.transfer.idempotentexecutor.IdempotentImportExecutor;
-import org.datatransferproject.spi.transfer.idempotentexecutor.IdempotentImportExecutorHelper;
+import org.datatransferproject.spi.transfer.idempotentexecutor.ItemImportResult;
 import org.datatransferproject.spi.transfer.provider.ImportResult;
 import org.datatransferproject.spi.transfer.provider.Importer;
-import org.datatransferproject.transfer.ImageStreamProvider;
 import org.datatransferproject.types.common.models.photos.PhotoAlbum;
 import org.datatransferproject.types.common.models.photos.PhotoModel;
 import org.datatransferproject.types.common.models.photos.PhotosContainerResource;
 import org.datatransferproject.types.transfer.auth.TokenSecretAuthData;
-
-import static java.lang.String.format;
 
 public class BackblazePhotosImporter
     implements Importer<TokenSecretAuthData, PhotosContainerResource> {
@@ -42,18 +42,18 @@ public class BackblazePhotosImporter
   private static final String PHOTO_TRANSFER_MAIN_FOLDER = "Photo Transfer";
 
   private final TemporaryPerJobDataStore jobStore;
-  private final ImageStreamProvider imageStreamProvider;
+  private final ConnectionProvider connectionProvider;
   private final Monitor monitor;
   private final BackblazeDataTransferClientFactory b2ClientFactory;
 
   public BackblazePhotosImporter(
-          Monitor monitor,
-          TemporaryPerJobDataStore jobStore,
-          ImageStreamProvider imageStreamProvider,
-          BackblazeDataTransferClientFactory b2ClientFactory) {
+      Monitor monitor,
+      TemporaryPerJobDataStore jobStore,
+      ConnectionProvider connectionProvider,
+      BackblazeDataTransferClientFactory b2ClientFactory) {
     this.monitor = monitor;
     this.jobStore = jobStore;
-    this.imageStreamProvider = imageStreamProvider;
+    this.connectionProvider = connectionProvider;
     this.b2ClientFactory = b2ClientFactory;
   }
 
@@ -82,17 +82,15 @@ public class BackblazePhotosImporter
 
     if (data.getPhotos() != null && data.getPhotos().size() > 0) {
       for (PhotoModel photo : data.getPhotos()) {
-        idempotentExecutor.executeAndSwallowIOExceptions(
-            IdempotentImportExecutorHelper.getPhotoIdempotentId(photo),
-            photo.getTitle(),
-            () -> importSinglePhoto(idempotentExecutor, b2Client, jobId, photo));
+        idempotentExecutor.importAndSwallowIOExceptions(
+            photo, p -> importSinglePhoto(idempotentExecutor, b2Client, jobId, p));
       }
     }
 
     return ImportResult.OK;
   }
 
-  private String importSinglePhoto(
+  private ItemImportResult<String> importSinglePhoto(
       IdempotentImportExecutor idempotentExecutor,
       BackblazeDataTransferClient b2Client,
       UUID jobId,
@@ -100,17 +98,15 @@ public class BackblazePhotosImporter
       throws IOException {
     String albumName = idempotentExecutor.getCachedValue(photo.getAlbumId());
 
-    InputStream inputStream;
-    if (photo.isInTempStore()) {
-      inputStream = jobStore.getStream(jobId, photo.getFetchableUrl()).getStream();
-    } else {
-      HttpURLConnection conn = imageStreamProvider.getConnection(photo.getFetchableUrl());
-      inputStream = conn.getInputStream();
+    File file;
+    try (InputStream is = connectionProvider.getInputStreamForItem(jobId, photo).getStream()) {
+      file = jobStore.getTempFileFromInputStream(is, photo.getDataId(), ".jpg");
     }
-
-    String response = b2Client.uploadFile(
-        String.format("%s/%s/%s.jpg", PHOTO_TRANSFER_MAIN_FOLDER, albumName, photo.getDataId()),
-        jobStore.getTempFileFromInputStream(inputStream, photo.getDataId(), ".jpg"));
+    String response =
+        b2Client.uploadFile(
+            String.format("%s/%s/%s.jpg", PHOTO_TRANSFER_MAIN_FOLDER, albumName, photo.getDataId()),
+            file);
+    long size = file.length();
 
     try {
       if (photo.isInTempStore()) {
@@ -119,10 +115,10 @@ public class BackblazePhotosImporter
     } catch (Exception e) {
       // Swallow the exception caused by Remove data so that existing flows continue
       monitor.info(
-              () -> format("Exception swallowed while removing data for jobId %s, localPath %s",
-                      jobId, photo.getFetchableUrl()), e);
+          () -> format("Exception swallowed while removing data for jobId %s, localPath %s",
+              jobId, photo.getFetchableUrl()), e);
     }
 
-    return response;
+    return ItemImportResult.success(response, size);
   }
 }
