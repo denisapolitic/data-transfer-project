@@ -15,11 +15,6 @@
  */
 package org.datatransferproject.transfer;
 
-import static org.datatransferproject.config.extension.SettingsExtensionLoader.getSettingsExtension;
-import static org.datatransferproject.launcher.monitor.MonitorLoader.loadMonitor;
-import static org.datatransferproject.spi.cloud.extension.CloudExtensionLoader.getCloudExtension;
-import static org.datatransferproject.spi.transfer.hooks.JobHooksLoader.loadJobHooks;
-
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -29,8 +24,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.UncaughtExceptionHandlers;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import java.util.List;
-import java.util.ServiceLoader;
 import okhttp3.OkHttpClient;
 import org.datatransferproject.api.launcher.Monitor;
 import org.datatransferproject.config.extension.SettingsExtension;
@@ -48,6 +41,16 @@ import org.datatransferproject.spi.transfer.idempotentexecutor.IdempotentImportE
 import org.datatransferproject.spi.transfer.provider.TransferCompatibilityProvider;
 import org.datatransferproject.spi.transfer.security.SecurityExtension;
 import org.datatransferproject.spi.transfer.security.SecurityExtensionLoader;
+import org.datatransferproject.spi.transfer.extension.GenericTransferExtensionInterface;
+
+import java.util.List;
+import java.util.ServiceLoader;
+
+import static org.datatransferproject.config.extension.SettingsExtensionLoader.getSettingsExtension;
+import static org.datatransferproject.launcher.monitor.MonitorLoader.loadMonitor;
+import static org.datatransferproject.spi.cloud.extension.CloudExtensionLoader.getCloudExtension;
+import static org.datatransferproject.spi.transfer.hooks.JobHooksLoader.loadJobHooks;
+
 
 /**
  * Main class to bootstrap a portability transfer worker that will operate on a single job whose
@@ -73,7 +76,7 @@ public class WorkerMain {
     SettingsExtension settingsExtension = getSettingsExtension();
     settingsExtension.initialize();
     WorkerExtensionContext extensionContext =
-        new WorkerExtensionContext(settingsExtension, monitor);
+            new WorkerExtensionContext(settingsExtension, monitor);
 
     // TODO this should be moved into a service extension
     extensionContext.registerService(HttpTransport.class, new NetHttpTransport());
@@ -81,8 +84,8 @@ public class WorkerMain {
     extensionContext.registerService(JsonFactory.class, GsonFactory.getDefaultInstance());
 
     ServiceLoader.load(ServiceExtension.class)
-        .iterator()
-        .forEachRemaining(serviceExtension -> serviceExtension.initialize(extensionContext));
+            .iterator()
+            .forEachRemaining(serviceExtension -> serviceExtension.initialize(extensionContext));
 
     // TODO: verify that this is the cloud extension that is specified in the configuration
     CloudExtension cloudExtension = getCloudExtension();
@@ -100,13 +103,13 @@ public class WorkerMain {
 
     // Load security extension and services
     SecurityExtension securityExtension =
-        SecurityExtensionLoader.getSecurityExtension(extensionContext);
+            SecurityExtensionLoader.getSecurityExtension(extensionContext);
     monitor.info(() -> "Using SecurityExtension: " + securityExtension.getClass().getName());
 
     IdempotentImportExecutor idempotentImportExecutor =
-        IdempotentImportExecutorLoader.load(extensionContext);
+            IdempotentImportExecutorLoader.load(extensionContext);
     monitor.info(
-        () -> "Using IdempotentImportExecutor: " + idempotentImportExecutor.getClass().getName());
+            () -> "Using IdempotentImportExecutor: " + idempotentImportExecutor.getClass().getName());
 
     // TODO: make configurable
     SymmetricKeyGenerator symmetricKeyGenerator = new AesSymmetricKeyGenerator(monitor);
@@ -147,16 +150,26 @@ public class WorkerMain {
     // Note that initialization of the TransferExtension is done in the WorkerModule since they're
     // initialized as they're requested.
     ServiceLoader.load(TransferExtension.class)
-        .iterator()
-        .forEachRemaining(
-            ext -> {
-              monitor.info(
-                  () -> "Loading transfer extension: " + ext + " for " + ext.getServiceId());
-              extensionsBuilder.add(ext);
-            });
+            .iterator()
+            .forEachRemaining(
+                    ext -> {
+                      monitor.info(
+                              () -> "Loading transfer extension: " + ext + " for " + ext.getServiceId() + ext.getClass().getName());
+                        monitor.info(
+                                () -> "Adding: " + ext);
+                        extensionsBuilder.add(ext);
+                    });
+    ServiceLoader.load(GenericTransferExtensionInterface.class)
+            .iterator()
+            .forEachRemaining(
+                    ext -> {
+                      monitor.info(
+                              () -> "Loading generic transfer extensions: " + ext);
+                      extensionsBuilder.addAll(ext.getGenericTransferExtensions());
+                    });
     ImmutableList<TransferExtension> extensions = extensionsBuilder.build();
     Preconditions.checkState(
-        !extensions.isEmpty(), "Could not find any implementations of TransferExtension");
+            !extensions.isEmpty(), "Could not find any implementations of TransferExtension");
     return extensions;
   }
 }

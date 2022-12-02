@@ -80,6 +80,7 @@ dependencies {
     compile project(':extensions:auth:portability-auth-twitter')
     compile project(':extensions:auth:portability-auth-imgur')
     compile project(':extensions:auth:portability-auth-koofr')
+    compile project(':extensions:auth:portability-auth-generic')
 
     compile project(':extensions:data-transfer:portability-data-transfer-daybook')
     compile project(':extensions:data-transfer:portability-data-transfer-deezer')
@@ -94,6 +95,7 @@ dependencies {
     compile project(':extensions:data-transfer:portability-data-transfer-twitter')
     compile project(':extensions:data-transfer:portability-data-transfer-imgur')
     compile project(':extensions:data-transfer:portability-data-transfer-koofr')
+    compile project(':extensions:data-transfer:portability-data-transfer-generic')
 
     if (offlineData == 'true') {
         compile project(':extensions:auth:portability-auth-offline-demo')
