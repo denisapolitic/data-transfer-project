@@ -3,6 +3,7 @@ package org.datatransferproject.auth.generic;
 import java.util.Map;
 import java.util.Set;
 import org.datatransferproject.auth.OAuth2Config;
+import org.datatransferproject.types.common.models.DataVertical;
 
 /**
  * Class that provides generic information for OAuth2
@@ -31,12 +32,12 @@ public class GenericOAuthConfig implements OAuth2Config {
   }
 
   @Override
-  public Map<String, Set<String>> getExportScopes() {
+  public Map<DataVertical, Set<String>> getExportScopes() {
     return authSpecification.getExportScopes();
   }
 
   @Override
-  public Map<String, Set<String>> getImportScopes() {
+  public Map<DataVertical, Set<String>> getImportScopes() {
     return authSpecification.getImportScopes();
   }
 }
