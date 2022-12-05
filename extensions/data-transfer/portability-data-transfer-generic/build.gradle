@@ -36,3 +36,11 @@ jar { from('resources') { include 'META-INF/services/*.*' } }
 
 
 configurePublication(project)
+
+task wrapper(type: Wrapper){
+    gradleVersion = '6.9.2'
+}
+
+task prepareKotlinBuildScriptModel {
+
+}
