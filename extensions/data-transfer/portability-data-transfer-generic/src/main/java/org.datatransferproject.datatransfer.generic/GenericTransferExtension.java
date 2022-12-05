@@ -33,6 +33,7 @@ import org.datatransferproject.spi.transfer.extension.TransferExtension;
 import org.datatransferproject.spi.transfer.provider.Exporter;
 import org.datatransferproject.spi.transfer.provider.Importer;
 import org.datatransferproject.datatransfer.generic.photos.GenericPhotosImporter;
+import org.datatransferproject.types.common.models.DataVertical;
 
 /* Generic transfer extension */
 public class GenericTransferExtension implements TransferExtension {
@@ -94,7 +95,7 @@ public class GenericTransferExtension implements TransferExtension {
   }
 
   @Override
-  public Importer<?, ?> getImporter(String transferDataType) {
+  public Importer<?, ?> getImporter(DataVertical transferDataType) {
     Preconditions.checkArgument(
         initialized, "The transfer extension is not initialized. Unable to get Importer");
     List<String> supportedDataTypes = configSpec.getSupportedDataTypes();
@@ -105,7 +106,7 @@ public class GenericTransferExtension implements TransferExtension {
   }
 
   @Override
-  public Exporter<?, ?> getExporter(String transferDataType) {
+  public Exporter<?, ?> getExporter(DataVertical transferDataType) {
     throw new IllegalArgumentException();
   }
 }
