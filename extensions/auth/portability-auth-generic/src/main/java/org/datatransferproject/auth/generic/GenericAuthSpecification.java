@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.HashSet;
+import org.datatransferproject.types.common.models.DataVertical;
 
 public class GenericAuthSpecification {
   @JsonProperty("serviceName")
@@ -55,24 +56,24 @@ public class GenericAuthSpecification {
     return this.tokenURL;
   }
 
-  public Map<String, Set<String>> getExportScopes() {
+  public Map<DataVertical, Set<String>> getExportScopes() {
     // ObjectMapper doesn't work directly with Map so we save the export scopes line as a string first
-    Map<String, Set<String>> exportScopes = new HashMap<String, Set<String>>();
+    Map<DataVertical, Set<String>> exportScopes = new HashMap<>();
     String dataType = this.exportScopes.substring(0, this.exportScopes.indexOf(':'));
     String scopes = this.exportScopes.substring(this.exportScopes.indexOf(':'));
     List<String> scopesList = Arrays.asList(scopes.split(","));
     Set<String> scopesSet = new HashSet<String>(scopesList);
-    exportScopes.put(dataType, scopesSet);
+    exportScopes.put(DataVertical.fromDataType(dataType), scopesSet);
     return exportScopes;
   }
 
-  public Map<String, Set<String>> getImportScopes() {
-    Map<String, Set<String>> importScopes = new HashMap<String, Set<String>>();
+  public Map<DataVertical, Set<String>> getImportScopes() {
+    Map<DataVertical, Set<String>> importScopes = new HashMap<>();
     String dataType = this.importScopes.substring(0, this.importScopes.indexOf(':'));
     String scopes = this.importScopes.substring(this.importScopes.indexOf(':'));
     List<String> scopesList = Arrays.asList(scopes.split(","));
     Set<String> scopesSet = new HashSet<String>(scopesList);
-    importScopes.put(dataType, scopesSet);
+    importScopes.put(DataVertical.fromDataType(dataType), scopesSet);
     return importScopes;
   }
 }
